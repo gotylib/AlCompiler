@@ -1,3 +1,5 @@
 <Solution>
   <Project Path="ALCompiler/ALCompiler.csproj" />
+  <Project Path="ConsoleTests/ConsoleTests.csproj" Id="faf1f1a7-c025-4ded-bfd6-bf087ee75e4c" />
+  <Project Path="Tests/Tests.csproj" Id="e1922578-1557-4611-a255-7896d1576f48" />
 </Solution>
