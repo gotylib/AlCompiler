@@ -1,5 +1,5 @@
-using ALCompiler.Lexer;
-using ALCompiler.Lexer.Enum;
+using ALCompiler.Lexing;
+using ALCompiler.Lexing.Enum;
 
 namespace Tests;
 

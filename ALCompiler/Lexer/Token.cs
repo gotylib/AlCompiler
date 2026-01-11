@@ -1,6 +1,6 @@
-﻿using ALCompiler.Lexer.Enum;
+﻿using ALCompiler.Lexing.Enum;
 
-namespace ALCompiler.Lexer
+namespace ALCompiler.Lexing
 {
     public class Token(TokenType type, string? value, int line, int position)
     {

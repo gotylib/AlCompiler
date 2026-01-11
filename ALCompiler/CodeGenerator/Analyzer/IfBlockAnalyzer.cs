@@ -1,7 +1,6 @@
 using ALCompiler.CodeGenerator.Models;
-using ALCompiler.Lexer.Enum;
-using ALCompiler.Parser;
-using ALCompiler.Parser.Nodes;
+using ALCompiler.Lexing.Enum;
+using ALCompiler.Parsing.Nodes;
 
 namespace ALCompiler.CodeGenerator.Analyzer;
 

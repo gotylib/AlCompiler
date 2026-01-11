@@ -1,10 +1,11 @@
-﻿using ALCompiler.CodeGenerator;
+﻿using ALCompilation;
+using ALCompiler.CodeGenerator;
 using ALCompiler.CodeGenerator.Analyzer;
 using ALCompiler.CodeGenerator.RegisterModel;
-using ALCompiler.Lexer;
-using ALCompiler.Parser;
-using ALCompiler.Parser.Nodes;
-using ALCompiler.Visualizer;
+using ALCompiler.Lexing;
+using ALCompiler.Parsing;
+using ALCompiler.Parsing.Nodes;
+using ALCompiler.Visualization;
 
 Dictionary<string, TaxRegister> _registers = [];
 
@@ -80,7 +81,6 @@ if (ast is IfNode ifNode)
 
 // Генерация кода (НОВЫЙ БЛОЧНЫЙ ПОДХОД)
 Console.WriteLine("\n═══════════════════ СГЕНЕРИРОВАННЫЙ КОД ═══════════════════");
-var blockGenerator = new TaxRegisterCodeGenerator(_registers);
+var blockGenerator = new TaxRegisterCodeGenerator();
 var blockCode = blockGenerator.GenerateCode(ast);
 Console.WriteLine(blockCode);
-

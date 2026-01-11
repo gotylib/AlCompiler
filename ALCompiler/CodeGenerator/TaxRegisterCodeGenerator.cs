@@ -2,17 +2,15 @@ using System.Text;
 using ALCompiler.CodeGenerator.Analyzer;
 using ALCompiler.CodeGenerator.Models;
 using ALCompiler.CodeGenerator.RegisterModel;
-using ALCompiler.Parser;
-using ALCompiler.Parser.Nodes;
+using ALCompiler.Parsing.Nodes;
 
 namespace ALCompiler.CodeGenerator;
 
 /// <summary>
 /// Блочный генератор кода - сначала анализирует AST, потом генерирует код
 /// </summary>
-public class TaxRegisterCodeGenerator(Dictionary<string, TaxRegister> registers)
+public class TaxRegisterCodeGenerator()
 {
-    private readonly Dictionary<string, TaxRegister> _registers = registers;
     private readonly IfBlockAnalyzer _analyzer = new();
 
     /// <summary>

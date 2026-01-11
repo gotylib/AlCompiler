@@ -1,6 +1,6 @@
-﻿using ALCompiler.Lexer;
+﻿using ALCompiler.Lexing;
 
-namespace ALCompiler.Parser.Nodes;
+namespace ALCompiler.Parsing.Nodes;
 
 public class BinaryOperationNode : ASTNode
 {

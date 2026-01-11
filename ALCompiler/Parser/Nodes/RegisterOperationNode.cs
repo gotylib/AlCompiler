@@ -1,4 +1,4 @@
-﻿namespace ALCompiler.Parser.Nodes;
+﻿namespace ALCompiler.Parsing.Nodes;
 
 public class RegisterOperationNode : ASTNode
 {

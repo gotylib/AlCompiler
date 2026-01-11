@@ -1,6 +1,6 @@
-using ALCompiler.Lexer;
-using ALCompiler.Parser;
-using ALCompiler.Parser.Nodes;
+using ALCompiler.Lexing;
+using ALCompiler.Parsing;
+using ALCompiler.Parsing.Nodes;
 
 namespace Tests;
 
@@ -35,7 +35,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     [Fact]
@@ -46,7 +46,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        var ex = Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        var ex = Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
         Assert.Contains("то", ex.Message.ToLower());
     }
     
@@ -58,7 +58,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     [Fact]
@@ -69,7 +69,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     [Fact]
@@ -80,7 +80,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -95,7 +95,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     [Fact]
@@ -106,7 +106,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     [Fact]
@@ -117,7 +117,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     [Fact]
@@ -128,7 +128,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     [Fact]
@@ -139,7 +139,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     [Fact]
@@ -150,7 +150,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -164,7 +164,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     [Fact]
@@ -174,7 +174,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     [Fact]
@@ -184,7 +184,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     [Fact]
@@ -194,7 +194,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -208,7 +208,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     [Fact]
@@ -218,7 +218,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -232,7 +232,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     [Fact]
@@ -242,7 +242,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     [Fact]
@@ -252,7 +252,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     [Fact]
@@ -262,7 +262,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -277,7 +277,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     [Fact]
@@ -287,7 +287,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     [Fact]
@@ -297,7 +297,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -311,7 +311,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        var ex = Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        var ex = Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
         
         // Сообщение должно содержать информацию о том, что ожидалось
         Assert.NotNull(ex.Message);
@@ -325,7 +325,7 @@ public class ParserSyntaxErrorTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
         
-        var ex = Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        var ex = Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
         
         Assert.NotNull(ex.Message);
         Assert.NotEmpty(ex.Message);
