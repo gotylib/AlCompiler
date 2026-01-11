@@ -1,6 +1,4 @@
-﻿using ALCompiler.Lexer;
-
-namespace ALCompiler.Parser.Nodes;
+﻿namespace ALCompiler.Parsing.Nodes;
 
 public class LiteralNode(object? value) : ASTNode
 {

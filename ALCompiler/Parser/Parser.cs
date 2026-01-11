@@ -1,9 +1,9 @@
-﻿using ALCompiler.Lexer;
-using ALCompiler.Lexer.Enum;
-using ALCompiler.Parser.Exception;
-using ALCompiler.Parser.Nodes;
+﻿using ALCompiler.Lexing;
+using ALCompiler.Lexing.Enum;
+using ALCompiler.Parsing.Exception;
+using ALCompiler.Parsing.Nodes;
 
-namespace ALCompiler.Parser;
+namespace ALCompiler.Parsing;
 
 public class Parser(List<Token> tokens)
 {

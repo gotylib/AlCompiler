@@ -1,3 +1,3 @@
-﻿namespace ALCompiler.Parser.Exception;
+﻿namespace ALCompiler.Parsing.Exception;
 
 public class ParseException(string message) : System.Exception(message);

@@ -1,7 +1,7 @@
-using ALCompiler.Lexer;
-using ALCompiler.Lexer.Enum;
-using ALCompiler.Parser;
-using ALCompiler.Parser.Nodes;
+using ALCompiler.Lexing;
+using ALCompiler.Lexing.Enum;
+using ALCompiler.Parsing;
+using ALCompiler.Parsing.Nodes;
 
 namespace Tests;
 
@@ -266,7 +266,7 @@ public class ParserErrorHandlingTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
 
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
 
     [Fact]
@@ -276,7 +276,7 @@ public class ParserErrorHandlingTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
 
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
 
     [Fact]
@@ -286,6 +286,6 @@ public class ParserErrorHandlingTests
         var tokens = lexer.Tokenize();
         var parser = new Parser(tokens);
 
-        Assert.Throws<ALCompiler.Parser.Exception.ParseException>(() => parser.Parse());
+        Assert.Throws<ALCompiler.Parsing.Exception.ParseException>(() => parser.Parse());
     }
 }

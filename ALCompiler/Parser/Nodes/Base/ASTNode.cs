@@ -1,3 +1,3 @@
-﻿namespace ALCompiler.Parser;
+﻿namespace ALCompiler.Parsing.Nodes;
 
 public abstract class ASTNode { }

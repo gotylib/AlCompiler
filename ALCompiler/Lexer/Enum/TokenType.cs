@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-namespace ALCompiler.Lexer.Enum
+﻿
+namespace ALCompiler.Lexing.Enum
 {
     public enum TokenType
     {

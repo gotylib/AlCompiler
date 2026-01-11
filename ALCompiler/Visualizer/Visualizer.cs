@@ -1,9 +1,8 @@
 using System.Text;
-using ALCompiler.Lexer;
-using ALCompiler.Parser;
-using ALCompiler.Parser.Nodes;
+using ALCompiler.Lexing;
+using ALCompiler.Parsing.Nodes;
 
-namespace ALCompiler.Visualizer;
+namespace ALCompiler.Visualization;
 
 public static class Visualizer
 {
@@ -55,32 +54,32 @@ public static class Visualizer
         Console.WriteLine($"\nВсего токенов: {tokens.Count}");
     }
     
-    private static ConsoleColor GetTokenColor(Lexer.Enum.TokenType type)
+    private static ConsoleColor GetTokenColor(Lexing.Enum.TokenType type)
     {
         return type switch
         {
-            Lexer.Enum.TokenType.Если or 
-            Lexer.Enum.TokenType.То or 
-            Lexer.Enum.TokenType.Иначе => ConsoleColor.Magenta,
+            Lexing.Enum.TokenType.Если or 
+            Lexing.Enum.TokenType.То or 
+            Lexing.Enum.TokenType.Иначе => ConsoleColor.Magenta,
             
-            Lexer.Enum.TokenType.И or 
-            Lexer.Enum.TokenType.Или or 
-            Lexer.Enum.TokenType.Не => ConsoleColor.Blue,
+            Lexing.Enum.TokenType.И or 
+            Lexing.Enum.TokenType.Или or 
+            Lexing.Enum.TokenType.Не => ConsoleColor.Blue,
             
-            Lexer.Enum.TokenType.Number => ConsoleColor.Green,
-            Lexer.Enum.TokenType.String => ConsoleColor.DarkYellow,
-            Lexer.Enum.TokenType.Identifier => ConsoleColor.White,
+            Lexing.Enum.TokenType.Number => ConsoleColor.Green,
+            Lexing.Enum.TokenType.String => ConsoleColor.DarkYellow,
+            Lexing.Enum.TokenType.Identifier => ConsoleColor.White,
             
-            Lexer.Enum.TokenType.Equals or
-            Lexer.Enum.TokenType.NotEquals or
-            Lexer.Enum.TokenType.Greater or
-            Lexer.Enum.TokenType.GreaterOrEqual or
-            Lexer.Enum.TokenType.Less or
-            Lexer.Enum.TokenType.LessOrEqual or
-            Lexer.Enum.TokenType.Assign => ConsoleColor.Red,
+            Lexing.Enum.TokenType.Equals or
+            Lexing.Enum.TokenType.NotEquals or
+            Lexing.Enum.TokenType.Greater or
+            Lexing.Enum.TokenType.GreaterOrEqual or
+            Lexing.Enum.TokenType.Less or
+            Lexing.Enum.TokenType.LessOrEqual or
+            Lexing.Enum.TokenType.Assign => ConsoleColor.Red,
             
-            Lexer.Enum.TokenType.EOF => ConsoleColor.DarkGray,
-            Lexer.Enum.TokenType.Invalid => ConsoleColor.DarkRed,
+            Lexing.Enum.TokenType.EOF => ConsoleColor.DarkGray,
+            Lexing.Enum.TokenType.Invalid => ConsoleColor.DarkRed,
             
             _ => ConsoleColor.Gray
         };

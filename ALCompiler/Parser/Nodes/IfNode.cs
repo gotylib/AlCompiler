@@ -1,4 +1,4 @@
-﻿namespace ALCompiler.Parser.Nodes;
+﻿namespace ALCompiler.Parsing.Nodes;
 
 public class IfNode(ASTNode condition, ASTNode thenBranch, ASTNode elseBranch = null)
     : ASTNode

@@ -1,13 +1,11 @@
-﻿
-using ALCompiler.Lexer.Enum;
+﻿using ALCompiler.Lexing.Enum;
 
-namespace ALCompiler.Lexer
+namespace ALCompiler.Lexing
 {
-    public class Lexer
+    public class Lexer(string source)
     {
-        private readonly string _source;
         private int _position;
-        private int _line;
+        private int _line = 1;
 
         private static readonly Dictionary<string, TokenType> Keywords = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -24,20 +22,13 @@ namespace ALCompiler.Lexer
         {"всезаписи", TokenType.ВсеЗаписи}
     };
 
-        public Lexer(string source)
-        {
-            _source = source;
-            _position = 0;
-            _line = 1;
-        }
-
         public List<Token> Tokenize()
         {
             var tokens = new List<Token>();
 
-            while (_position < _source.Length)
+            while (_position < source.Length)
             {
-                var current = _source[_position];
+                var current = source[_position];
 
                 // Пропускаем пробелы
                 if (char.IsWhiteSpace(current))
@@ -48,7 +39,7 @@ namespace ALCompiler.Lexer
                 }
 
                 // Графа (гр10102212)
-                if (current == 'г' && (_position + 1 < _source.Length && _source[_position + 1] == 'р'))
+                if (current == 'г' && (_position + 1 < source.Length && source[_position + 1] == 'р'))
                 {
                     tokens.Add(ReadGraphSelector());
                     continue;
@@ -180,12 +171,12 @@ namespace ALCompiler.Lexer
             _position += 2; // Пропускаем "гр"
 
             // Читаем номер графы (8 или более цифр)
-            while (_position < _source.Length && char.IsDigit(_source[_position]))
+            while (_position < source.Length && char.IsDigit(source[_position]))
             {
                 _position++;
             }
 
-            var value = _source.Substring(start, _position - start);
+            var value = source.Substring(start, _position - start);
             return new Token(TokenType.Identifier, value, _line, _position);
         }
 
@@ -194,10 +185,10 @@ namespace ALCompiler.Lexer
             var start = _position;
             var hasDot = false;
 
-            while (_position < _source.Length &&
-                   (char.IsDigit(_source[_position]) || _source[_position] == '.'))
+            while (_position < source.Length &&
+                   (char.IsDigit(source[_position]) || source[_position] == '.'))
             {
-                if (_source[_position] == '.')
+                if (source[_position] == '.')
                 {
                     if (hasDot) break; // Уже была точка
                     hasDot = true;
@@ -205,20 +196,20 @@ namespace ALCompiler.Lexer
                 _position++;
             }
 
-            var value = _source.Substring(start, _position - start);
+            var value = source.Substring(start, _position - start);
             return new Token(TokenType.Number, value, _line, _position);
         }
 
         private Token ReadIdentifier()
         {
             var start = _position;
-            while (_position < _source.Length &&
-                   (char.IsLetterOrDigit(_source[_position]) || _source[_position] == '_'))
+            while (_position < source.Length &&
+                   (char.IsLetterOrDigit(source[_position]) || source[_position] == '_'))
             {
                 _position++;
             }
 
-            var value = _source.Substring(start, _position - start);
+            var value = source.Substring(start, _position - start);
 
             if (Keywords.TryGetValue(value.ToLower(), out var keywordType))
             {
@@ -233,14 +224,14 @@ namespace ALCompiler.Lexer
             _position++; // Пропускаем открывающую кавычку
             var start = _position;
 
-            while (_position < _source.Length && _source[_position] != quote)
+            while (_position < source.Length && source[_position] != quote)
             {
                 _position++;
             }
 
-            var value = _source.Substring(start, _position - start);
+            var value = source.Substring(start, _position - start);
 
-            if (_position < _source.Length && _source[_position] == quote)
+            if (_position < source.Length && source[_position] == quote)
             {
                 _position++; // Пропускаем закрывающую кавычку
             }
@@ -249,6 +240,6 @@ namespace ALCompiler.Lexer
         }
 
         private char Peek() =>
-            _position + 1 < _source.Length ? _source[_position + 1] : '\0';
+            _position + 1 < source.Length ? source[_position + 1] : '\0';
     }
 }
