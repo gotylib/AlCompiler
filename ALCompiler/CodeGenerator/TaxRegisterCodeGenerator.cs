@@ -1,207 +1,171 @@
-﻿using ALCompiler.CodeGenerator.RegisterModel;
-using ALCompiler.Lexer;
-using ALCompiler.Lexer.Enum;
+using System.Text;
+using ALCompiler.CodeGenerator.Analyzer;
+using ALCompiler.CodeGenerator.Models;
+using ALCompiler.CodeGenerator.RegisterModel;
 using ALCompiler.Parser;
 using ALCompiler.Parser.Nodes;
-using System.Text;
 
-namespace ALCompiler.CodeGenerator
+namespace ALCompiler.CodeGenerator;
+
+/// <summary>
+/// Блочный генератор кода - сначала анализирует AST, потом генерирует код
+/// </summary>
+public class TaxRegisterCodeGenerator(Dictionary<string, TaxRegister> registers)
 {
-    public class TaxRegisterCodeGenerator
+    private readonly Dictionary<string, TaxRegister> _registers = registers;
+    private readonly IfBlockAnalyzer _analyzer = new();
+
+    /// <summary>
+    /// Генерирует код из AST
+    /// </summary>
+    public string GenerateCode(ASTNode ast)
     {
-        private readonly Dictionary<string, TaxRegister> _registers;
-
-        public TaxRegisterCodeGenerator(Dictionary<string, TaxRegister> registers)
+        var sb = new StringBuilder();
+        
+        sb.AppendLine("public bool Validate(Dictionary<string, TaxRegister> _registers)");
+        sb.AppendLine("{");
+        sb.AppendLine("    var isValid = true;");
+        sb.AppendLine();
+        
+        if (ast is IfNode ifNode)
         {
-            _registers = registers;
+            // Шаг 1: Анализируем AST и собираем данные
+            var blockInfo = _analyzer.Analyze(ifNode);
+            
+            // Шаг 2: Генерируем код на основе собранных данных
+            GenerateIfBlockCode(blockInfo, sb, indentLevel: 1);
         }
-
-        public string GenerateCode(ASTNode ast)
+        
+        sb.AppendLine();
+        sb.AppendLine("    return isValid;");
+        sb.AppendLine("}");
+        
+        return sb.ToString();
+    }
+    
+    /// <summary>
+    /// Генерирует код для блока Если-То-Иначе на основе собранных данных
+    /// </summary>
+    private void GenerateIfBlockCode(IfBlockInfo block, StringBuilder sb, int indentLevel)
+    {
+        var indent = new string(' ', indentLevel * 4);
+        
+        // Определяем основной регистр из условий
+        var mainRegister = block.GetConditionRegisters().FirstOrDefault() ?? "unknown";
+        
+        sb.AppendLine($"{indent}// Условие: {block}");
+        sb.AppendLine($"{indent}{{");
+        
+        var innerIndent = new string(' ', (indentLevel + 1) * 4);
+        
+        // Генерируем выборку с условиями
+        sb.AppendLine($"{innerIndent}// Выборка строк по условию");
+        sb.AppendLine($"{innerIndent}var conditions = _registers[\"{mainRegister}\"].Table");
+        sb.AppendLine($"{innerIndent}    .Where(row => {BuildConditionExpression(block.Conditions, mainRegister)})");
+        sb.AppendLine($"{innerIndent}    .ToList();");
+        sb.AppendLine();
+        
+        // Генерируем проверку/присваивание для Then
+        if (block.ThenAssignment != null)
         {
-            var code = new StringBuilder();
-
-            // Начало метода проверки
-            code.AppendLine("public bool Validate()");
-            code.AppendLine("{");
-            code.AppendLine("    var errors = new List<string>();");
-            code.AppendLine("    var isValid = true;");
-            code.AppendLine();
-
-            GenerateNodeCode(ast, code, 1);
-
-            code.AppendLine();
-            code.AppendLine("    return isValid;");
-            code.AppendLine("}");
-
-            return code.ToString();
+            GenerateAssignmentValidation(block.ThenAssignment, sb, indentLevel + 1);
         }
-
-        private void GenerateNodeCode(ASTNode node, StringBuilder code, int indentLevel)
+        
+        // Генерируем проверку для Else (если есть)
+        if (block.ElseAssignment != null)
         {
-            var indent = new string(' ', indentLevel * 4);
-
-            switch (node)
+            sb.AppendLine();
+            sb.AppendLine($"{innerIndent}// Иначе");
+            sb.AppendLine($"{innerIndent}var elseConditions = _registers[\"{mainRegister}\"].Table");
+            sb.AppendLine($"{innerIndent}    .Where(row => !({BuildConditionExpression(block.Conditions, mainRegister)}))");
+            sb.AppendLine($"{innerIndent}    .ToList();");
+            sb.AppendLine();
+            GenerateAssignmentValidation(block.ElseAssignment, sb, indentLevel + 1, "elseConditions");
+        }
+        
+        sb.AppendLine($"{indent}}}");
+    }
+    
+    /// <summary>
+    /// Строит выражение условия из списка ConditionInfo
+    /// </summary>
+    private string BuildConditionExpression(List<ConditionInfo> conditions, string contextRegister)
+    {
+        if (conditions.Count == 0)
+            return "true";
+        
+        var sb = new StringBuilder();
+        
+        for (var i = 0; i < conditions.Count; i++)
+        {
+            var cond = conditions[i];
+            
+            // Добавляем логический оператор (кроме первого условия)
+            if (i > 0 && cond.LogicalOperator != null)
             {
-                case IfNode ifNode:
-                    code.Append(indent);
-                    code.Append("if (");
-                    GenerateExpressionCode(ifNode.Condition, code);
-                    code.AppendLine(")");
-                    code.Append(indent);
-                    code.AppendLine("{");
-                    GenerateNodeCode(ifNode.ThenBranch, code, indentLevel + 1);
-                    code.Append(indent);
-                    code.AppendLine("}");
-
-                    if (ifNode.ElseBranch != null)
-                    {
-                        code.Append(indent);
-                        code.AppendLine("else");
-                        code.Append(indent);
-                        code.AppendLine("{");
-                        GenerateNodeCode(ifNode.ElseBranch, code, indentLevel + 1);
-                        code.Append(indent);
-                        code.AppendLine("}");
-                    }
-                    break;
-
-                case AssignmentNode assignment:
-                    // Обычное присваивание значения
-                    code.Append(indent);
-                    code.Append(GenerateGraphAccessor(assignment.Target));
-                    code.Append(" = ");
-                    GenerateExpressionCode(assignment.Value, code);
-                    code.AppendLine(";");
-                    break;
-
-                case RegisterOperationNode operation:
-                    // Специальные операции над регистрами
-                    code.Append(indent);
-                    code.AppendLine(GenerateRegisterOperation(operation));
-                    break;
-
-                case BinaryOperationNode binaryOp:
-                    GenerateExpressionCode(binaryOp, code);
-                    break;
+                var logOp = cond.LogicalOperator == "или" ? " || " : " && ";
+                sb.Append(logOp);
             }
+            
+            // Строим само условие
+            var leftSide = cond.RegisterCode == contextRegister
+                ? $"row[{cond.GraphNumber}]"
+                : $"GetValue(\"{cond.RegisterCode}\", row, {cond.GraphNumber})";
+            
+            var rightSide = cond.IsLiteralComparison
+                ? FormatLiteralValue(cond.Value)
+                : $"row[{cond.CompareToGraph}]";
+            
+            sb.Append($"({leftSide} {cond.Operator} {rightSide})");
         }
-
-        private string GenerateGraphAccessor(GraphSelectorNode graph)
+        
+        return sb.ToString();
+    }
+    
+    /// <summary>
+    /// Генерирует код проверки присваивания
+    /// </summary>
+    private static void GenerateAssignmentValidation(AssignmentInfo assignment, StringBuilder sb, int indentLevel, string conditionsVar = "conditions")
+    {
+        var indent = new string(' ', indentLevel * 4);
+        
+        if (assignment.IsLiteralAssignment)
         {
-            return $"GetRegisterValue(\"{graph.RegisterCode}\", {graph.TablePart}, {graph.GraphNumber})";
+            // Присваивание литерала - просто проверяем что все значения равны литералу
+            sb.AppendLine($"{indent}// Проверка: гр{assignment.TargetRegister}_{assignment.TargetGraph} должна быть {assignment.LiteralValue}");
+            sb.AppendLine($"{indent}var targetValues = {conditionsVar}.Select(row => row[{assignment.TargetGraph}]);");
+            sb.AppendLine($"{indent}isValid &= targetValues.All(v => Equals(v, {FormatLiteralValue(assignment.LiteralValue)}));");
         }
-
-        private string GenerateRegisterOperation(RegisterOperationNode operation)
+        else
         {
-            // Проверяем, что TargetGraph указан
-            if (!operation.TargetGraph.HasValue)
-            {
-                throw new InvalidOperationException(
-                    $"Для операции {operation.Operation} не указана целевая графа");
-            }
-
-            var targetGraph = operation.TargetGraph.Value;
-            var sourceReg = operation.Source.RegisterCode;
-            var sourceGraph = operation.Source.GraphNumber;
-            var targetReg = operation.Source.RegisterCode; // Или берем из другого свойства, если есть
-
-            var operationCode = operation.Operation switch
-            {
-                RegisterOperationNode.OperationType.ContainsAll =>
-                    GenerateContainsAllOperation(sourceReg, sourceGraph, targetReg, targetGraph),
-
-                RegisterOperationNode.OperationType.ContainsAny =>
-                    GenerateContainsAnyOperation(sourceReg, sourceGraph, targetReg, targetGraph),
-
-                RegisterOperationNode.OperationType.Sum =>
-                    GenerateSumOperation(sourceReg, sourceGraph, targetReg, targetGraph),
-
-                _ => throw new NotSupportedException($"Операция {operation.Operation} не поддерживается")
-            };
-
-            return operationCode;
+            // Присваивание из другой графы - проверяем соответствие
+            sb.AppendLine($"{indent}// Проверка: значения гр{assignment.TargetRegister}_{assignment.TargetGraph} должны соответствовать гр{assignment.SourceRegister}_{assignment.SourceGraph}");
+            sb.AppendLine($"{indent}var sourceValues = {conditionsVar}.Select(row => row[{assignment.SourceGraph}]).ToHashSet();");
+            sb.AppendLine($"{indent}var targetValues = _registers[\"{assignment.TargetRegister}\"].Table");
+            sb.AppendLine($"{indent}    .Select(row => row[{assignment.TargetGraph}]);");
+            sb.AppendLine($"{indent}isValid &= targetValues.All(v => sourceValues.Contains(v));");
         }
-
-        private string GenerateContainsAllOperation(string sourceReg, int sourceGraph,
-                                                  string targetReg, int targetGraph)
+    }
+    
+    /// <summary>
+    /// Форматирует литеральное значение для вставки в код
+    /// </summary>
+    private static string FormatLiteralValue(object? value)
+    {
+        return value switch
         {
-            return $$"""
-                // Проверка: все значения гр{{sourceReg}}2{{sourceGraph:000}} содержатся в гр{{targetReg}}2{{targetGraph:000}}
-                var sourceValues = GetRegisterColumn("{{sourceReg}}", 2, {{sourceGraph}});
-                var targetValues = GetRegisterColumn("{{targetReg}}", 2, {{targetGraph}});
-                isValid &= sourceValues.All(sv => targetValues.Contains(sv));
-                if (!isValid) errors.Add("Не все значения содержатся в целевой графе");
-                """;
-        }
-
-        private string GenerateContainsAnyOperation(string sourceReg, int sourceGraph,
-                                                  string targetReg, int targetGraph)
-        {
-            return $$"""
-                // Проверка: хотя бы одно значение гр{{sourceReg}}2{{sourceGraph:000}} содержится в целевой графе
-                var sourceValues = GetRegisterColumn("{{sourceReg}}", 2, {{sourceGraph}});
-                var targetValues = GetRegisterColumn("{{targetReg}}", 2, {{targetGraph}});
-                isValid &= sourceValues.Any(sv => targetValues.Contains(sv));
-                """;
-        }
-
-        private string GenerateSumOperation(string sourceReg, int sourceGraph,
-                                           string targetReg, int targetGraph)
-        {
-            return $$"""
-                // Сумма значений гр{{sourceReg}}2{{sourceGraph:000}}
-                var sum = GetRegisterColumn("{{sourceReg}}", 2, {{sourceGraph}})
-                            .Select(v => Convert.ToDecimal(v))
-                            .Sum();
-                SetRegisterValue("{{targetReg}}", 2, {{targetGraph}}, sum);
-                """;
-        }
-
-        private void GenerateExpressionCode(ASTNode node, StringBuilder code)
-        {
-            switch (node)
-            {
-                case GraphSelectorNode graph:
-                    code.Append(GenerateGraphAccessor(graph));
-                    break;
-
-                case LiteralNode literal:
-                    if (literal.Value == null)
-                        code.Append("null");
-                    else if (literal.Value is string)
-                        code.Append($"\"{literal.Value}\"");
-                    else
-                        code.Append(literal.Value);
-                    break;
-
-                case BinaryOperationNode binary:
-                    code.Append("(");
-                    GenerateExpressionCode(binary.Left, code);
-                    code.Append($" {GetOperator(binary.Operator)} ");
-                    GenerateExpressionCode(binary.Right, code);
-                    code.Append(")");
-                    break;
-            }
-        }
-
-        private string GetOperator(Token token)
-        {
-            return token.Type switch
-            {
-                TokenType.Equals => "==",
-                TokenType.NotEquals => "!=",
-                TokenType.Greater => ">",
-                TokenType.GreaterOrEqual => ">=",
-                TokenType.Less => "<",
-                TokenType.LessOrEqual => "<=",
-                TokenType.Или => "||",
-                TokenType.И => "&&",
-                TokenType.Plus => "+",
-                TokenType.Minus => "-",
-                TokenType.Multiply => "*",
-                TokenType.Divide => "/",
-                _ => token.Value
-            };
-        }
+            null => "null",
+            string s => $"\"{s}\"",
+            bool b => b ? "true" : "false",
+            _ => value.ToString() ?? "null"
+        };
+    }
+    
+    /// <summary>
+    /// Возвращает детальную информацию о проанализированном блоке (для отладки)
+    /// </summary>
+    public IfBlockInfo AnalyzeOnly(IfNode ifNode)
+    {
+        return _analyzer.Analyze(ifNode);
     }
 }
